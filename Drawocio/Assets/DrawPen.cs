@@ -17,7 +17,7 @@ public class DrawPen : MonoBehaviour {
 	private float firstY;
 	private bool firstPos;
 	private List<GameObject> art;
-	//private List<List<GameObject>> art;
+	private List<GameObject> subChunks;
 	
 	// Structure for line points
 	struct myLine
@@ -31,7 +31,7 @@ public class DrawPen : MonoBehaviour {
 		isMousePressed = false;
 		pointsList = new List<Vector3>();
 		art = new List<GameObject> ();
-		//art = new List<List<GameObject>> ();
+		subChunks = new List<GameObject> ();
 		firstPos = true;
 		lastY = -1000000f;
 		lastX = 1000000f;
@@ -59,9 +59,9 @@ public class DrawPen : MonoBehaviour {
 				isMousePressed = false;
 				firstPos = true;
 
-				for(int i = 0; i < art.ToArray().Length-1; i++)
+				for(int i = 0; i < subChunks.ToArray().Length-1; i++)
 				{
-					ConfigurableJoint joint = art[i].AddComponent<ConfigurableJoint>();
+					ConfigurableJoint joint = subChunks[i].AddComponent<ConfigurableJoint>();
 					joint.xMotion = ConfigurableJointMotion.Locked;
 					joint.yMotion = ConfigurableJointMotion.Locked;
 					joint.zMotion = ConfigurableJointMotion.Locked;
@@ -71,12 +71,12 @@ public class DrawPen : MonoBehaviour {
 					joint.targetPosition = new Vector3(0, 0, 0);
 					joint.projectionMode = JointProjectionMode.PositionOnly;
 					joint.projectionDistance = .2f;
-					joint.connectedBody = art[i+1].rigidbody;
+					joint.connectedBody = subChunks[i+1].rigidbody;
 
 				}
 				if(Mathf.Abs(firstX-lastX) <= 3 && Mathf.Abs(firstY-lastY) <= 3)
 				{
-					ConfigurableJoint joint = art[art.ToArray().Length - 1].AddComponent<ConfigurableJoint>();
+					ConfigurableJoint joint = subChunks[subChunks.ToArray().Length - 1].AddComponent<ConfigurableJoint>();
 					joint.xMotion = ConfigurableJointMotion.Locked;
 					joint.yMotion = ConfigurableJointMotion.Locked;
 					joint.zMotion = ConfigurableJointMotion.Locked;
@@ -86,8 +86,10 @@ public class DrawPen : MonoBehaviour {
 					joint.targetPosition = new Vector3(0, 0, 0);
 					joint.projectionMode = JointProjectionMode.PositionOnly;
 					joint.projectionDistance = .2f;
-					joint.connectedBody = art[0].rigidbody;
+					joint.connectedBody = subChunks[0].rigidbody;
 				}
+			
+				subChunks.Clear();
 			}
 			// Drawing line when mouse is moving(presses)
 			if(isMousePressed)
@@ -109,7 +111,8 @@ public class DrawPen : MonoBehaviour {
 						Debug.Log (distanceX);
 						Debug.Log (distanceY);
 						GameObject newCube = Instantiate(prefab, mousePos, Quaternion.identity) as GameObject;
-						art.Add(newCube);
+						subChunks.Add(newCube);
+						art.Add(newCube);						
 						lastY = mousePos.y;
 						lastX = mousePos.x;
 
@@ -133,9 +136,9 @@ public class DrawPen : MonoBehaviour {
 				isMousePressed = false;
 				firstPos = true;
 				
-				for(int i = 0; i < art.ToArray().Length-1; i++)
+				for(int i = 0; i < subChunks.ToArray().Length-1; i++)
 				{
-					ConfigurableJoint joint = art[i].AddComponent<ConfigurableJoint>();
+					ConfigurableJoint joint = subChunks[i].AddComponent<ConfigurableJoint>();
 					joint.xMotion = ConfigurableJointMotion.Locked;
 					joint.yMotion = ConfigurableJointMotion.Locked;
 					joint.zMotion = ConfigurableJointMotion.Locked;
@@ -145,12 +148,12 @@ public class DrawPen : MonoBehaviour {
 					joint.targetPosition = new Vector3(0, 0, 0);
 					joint.projectionMode = JointProjectionMode.PositionOnly;
 					joint.projectionDistance = .01f;
-					joint.connectedBody = art[i+1].rigidbody;
+					joint.connectedBody = subChunks[i+1].rigidbody;
 					
 				}
 				if(Mathf.Abs(firstX-lastX) <= 3 && Mathf.Abs(firstY-lastY) <= 3)
 				{
-					ConfigurableJoint joint = art[art.ToArray().Length - 1].AddComponent<ConfigurableJoint>();
+					ConfigurableJoint joint = subChunks[subChunks.ToArray().Length - 1].AddComponent<ConfigurableJoint>();
 					joint.xMotion = ConfigurableJointMotion.Locked;
 					joint.yMotion = ConfigurableJointMotion.Locked;
 					joint.zMotion = ConfigurableJointMotion.Locked;
@@ -160,8 +163,10 @@ public class DrawPen : MonoBehaviour {
 					joint.targetPosition = new Vector3(0, 0, 0);
 					joint.projectionMode = JointProjectionMode.PositionOnly;
 					joint.projectionDistance = .01f;
-					joint.connectedBody = art[0].rigidbody;
+					joint.connectedBody = subChunks[0].rigidbody;
 				}
+
+				subChunks.Clear();
 			}
 			// Drawing line when mouse is moving(presses)
 			if(isMousePressed)
@@ -183,6 +188,7 @@ public class DrawPen : MonoBehaviour {
 						Debug.Log (distanceX);
 						Debug.Log (distanceY);
 						GameObject newCube = Instantiate(ink, mousePos, Quaternion.identity) as GameObject;
+						subChunks.Add(newCube);
 						art.Add(newCube);
 						lastY = mousePos.y;
 						lastX = mousePos.x;
@@ -207,9 +213,9 @@ public class DrawPen : MonoBehaviour {
 				isMousePressed = false;
 				firstPos = true;
 
-				for(int i = 0; i < art.ToArray().Length-1; i++)
+				for(int i = 0; i < subChunks.ToArray().Length-1; i++)
 				{
-					ConfigurableJoint joint = art[i].AddComponent<ConfigurableJoint>();
+					ConfigurableJoint joint = subChunks[i].AddComponent<ConfigurableJoint>();
 					joint.xMotion = ConfigurableJointMotion.Locked;
 					joint.yMotion = ConfigurableJointMotion.Locked;
 					joint.zMotion = ConfigurableJointMotion.Locked;
@@ -217,10 +223,9 @@ public class DrawPen : MonoBehaviour {
 					joint.angularYMotion = ConfigurableJointMotion.Locked;
 					joint.angularZMotion = ConfigurableJointMotion.Locked;
 					joint.targetPosition = new Vector3(0, 0, 0);
-					joint.connectedBody = art[i+1].rigidbody;
+					joint.connectedBody = subChunks[i+1].rigidbody;
 				}
-
-
+				subChunks.Clear();
 			}
 			// Drawing line when mouse is moving(presses)
 			if(isMousePressed)
@@ -242,6 +247,7 @@ public class DrawPen : MonoBehaviour {
 						Debug.Log (distanceX);
 						Debug.Log (distanceY);
 						GameObject newCube = Instantiate(charcoal, mousePos, Quaternion.identity) as GameObject;
+						subChunks.Add(newCube);
 						art.Add(newCube);
 						lastY = mousePos.y;
 						lastX = mousePos.x;

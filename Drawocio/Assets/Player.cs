@@ -9,29 +9,37 @@ public class Boundary
 
 public class Player : MonoBehaviour
 {
-	public float speed;
-	public float tilt;
-	public Boundary boundary;
+	private float walkspeed = 5.0f;
+	private float jumpheight = 250.0f;
+	private bool grounded = false;
 	
-	void FixedUpdate ()
-	{
-		float moveHorizontal = Input.GetAxis ("Horizontal");
-		//float moveVertical = Input.GetAxis ("Vertical");
+	void Start() {
 		
-		Vector3 movement = new Vector3 (moveHorizontal, 0.0f,0.0f);
-		rigidbody.velocity = movement * speed;
+	}
+	
+	void Update() {
 		
-		rigidbody.position = new Vector3 
-			(
-				Mathf.Clamp (rigidbody.position.x, boundary.xMin, boundary.xMax), 			 
-				Mathf.Clamp (rigidbody.position.y, boundary.yMin, boundary.yMax),
-				Mathf.Clamp (rigidbody.position.z, boundary.zMin, boundary.zMax));
+		rigidbody.freezeRotation = true;
 		
-		rigidbody.rotation = Quaternion.Euler (0.0f, 0.0f, rigidbody.velocity.x * -tilt);
-
-		if(Input.GetKey(KeyCode.UpArrow))
-		{
-			rigidbody.velocity = new Vector3(0,1,0);
+		if (Input.GetKey(KeyCode.W)) rigidbody.position = rigidbody.position + (new Vector3(0, 0,-1) * Time.deltaTime * walkspeed);
+		if (Input.GetKey(KeyCode.S)) rigidbody.position = rigidbody.position + (new Vector3(0, 0,1) * Time.deltaTime * walkspeed);
+		if (Input.GetKey(KeyCode.A)) rigidbody.position = rigidbody.position + (new Vector3(1, 0, 0) * Time.deltaTime * walkspeed);
+		if (Input.GetKey(KeyCode.D)) rigidbody.position = rigidbody.position + (new Vector3(-1, 0, 0) * Time.deltaTime * walkspeed);
+		
+		if (Input.GetKey(KeyCode.UpArrow)) {
+			Jump();
+		}
+	}
+	
+	void OnCollisionEnter(Collision hit) {
+		grounded = true;
+		Debug.Log ("hit wall");
+	}
+	
+	void Jump() {
+		if (grounded == true) {
+			rigidbody.AddForce(Vector3.up * jumpheight);
+			grounded = false;
 		}
 	}
 }
